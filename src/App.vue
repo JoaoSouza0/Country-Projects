@@ -40,5 +40,8 @@ img {
 
 body {
   background-color: var(--very-dark-blue);
+  font-family: "Nunito Sans", sans-serif;
+
+
 }
 </style>
