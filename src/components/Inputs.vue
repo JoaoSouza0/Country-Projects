@@ -32,7 +32,8 @@
 </template>
 
 <script>
-export default {
+/* import { api } from "../services.js";
+ */ export default {
   name: "inputs",
   data() {
     return {
@@ -46,15 +47,17 @@ export default {
     openModal() {
       this.isOpen = !this.isOpen;
     },
-    changeRegion(region) {
-      fetch(`https://restcountries.com/v3/region/${region}`)
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-        });
+    async changeRegion(region) {
+      /*       const data = await 
+       */
+      if (region !== this.label) {
+        console.log(
+          await this.$router.push({ query: { continent: `${region}` } })
+        );
+        this.label = region;
+      }
 
       this.isOpen = false;
-      this.label = region;
     },
     getCountryName(name) {
       fetch(`https://restcountries.com/v3/name/${name}`)
