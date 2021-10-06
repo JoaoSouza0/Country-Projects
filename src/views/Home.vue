@@ -4,7 +4,7 @@
         <section>
             <div class="item-country" v-for="(country, index) in pagination" :key="index">
                 <ItemCountry
-                    :commonName="country.name"
+                    :common-name="country.name"
                     :capital="country.capital"
                     :region="country.region"
                     :flag="country.flags.png"
@@ -12,21 +12,12 @@
                 />
             </div>
         </section>
-        <div class="pagination">
-            <div class="pagination-itens">
-                <button v-if="paginationStart > 0" @click="spliceArrayCountries(paginationStart - itensInPage)">
-                    <ion-icon name="chevron-back-outline"></ion-icon>
-                </button>
-                <p>{{ currentPage }}</p>
-                <button
-                    v-if="paginationStart + itensInPage < arrayCountry.length"
-                    @click="spliceArrayCountries(paginationStart + itensInPage)"
-                >
-                    <ion-icon name="chevron-forward-outline"></ion-icon>
-                </button>
-                <p>{{ lastPage }}</p>
-            </div>
-        </div>
+        <PagePagination
+            @paginate="spliceArrayCountries"
+            :pagination-start="paginationStart"
+            :itens-in-page="itensInPage"
+            :number-of-itens="numberOfItens"
+        />
     </div>
 </template>
 
@@ -35,15 +26,18 @@
 import { api } from '../services.js';
 import Inputs from '@/components/Inputs.vue';
 import ItemCountry from '@/components/ItemCountry.vue';
+import PagePagination from '@/components/PagePagination.vue';
+
 export default {
     name: 'Home',
     components: {
         Inputs,
-        ItemCountry
+        ItemCountry,
+        PagePagination
     },
     data() {
         return {
-            arrayCountry: [],
+            contries: [],
             paginationStart: 0,
             pagination: [],
             itensInPage: 8
@@ -53,32 +47,30 @@ export default {
         url() {
             return this.$route.query;
         },
-        lastPage() {
-            return Math.round(this.arrayCountry.length / this.itensInPage);
-        },
-        currentPage() {
-            return this.paginationStart / this.itensInPage;
+        numberOfItens() {
+            return this.contries.length;
         }
     },
     watch: {
         async url() {
-            this.filterCountries(this.url);
+            this.url.endpoint ? this.filterCountries(this.url) : this.getAllCountry();
         }
     },
     methods: {
         async filterCountries(query) {
+            this.contries = [];
             const { endpoint } = query;
             const countryFiltered = await api.getCountry(`${endpoint}`);
-            !countryFiltered.status ? (this.arrayCountry = countryFiltered) : console.log('page not found');
+            !countryFiltered.status ? (this.contries = countryFiltered) : console.log('page not found');
+            this.spliceArrayCountries((this.paginationStart = 0));
         },
         async getAllCountry() {
-            const all = await api.getCountry(`/all?fields=flags,name,capital,population,region`);
-            this.arrayCountry = all;
+            this.contries = await api.getCountry(`/all?fields=flags,name,capital,population,region`);
             this.spliceArrayCountries(this.paginationStart);
         },
         spliceArrayCountries(start) {
             this.paginationStart = start;
-            return (this.pagination = this.arrayCountry.slice(start, start + this.itensInPage));
+            return (this.pagination = this.contries.slice(start, start + this.itensInPage));
         }
     },
     created() {
@@ -105,32 +97,5 @@ section {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-}
-.pagination {
-    padding: 15px;
-    display: flex;
-    justify-content: center;
-}
-.pagination-itens {
-    text-align: end;
-    margin-left: 25px;
-    width: 140px;
-}
-
-.pagination-itens p {
-    display: inline;
-    padding: 5px;
-}
-
-.pagination button {
-    color: #fff;
-    background: transparent;
-    border: 1px solid rgb(117, 117, 117);
-    border-radius: 5px;
-    margin: 0 5px;
-    cursor: pointer;
-}
-.pagination p {
-    color: #fff;
 }
 </style>
