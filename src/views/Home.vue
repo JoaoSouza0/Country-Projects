@@ -1,7 +1,7 @@
 <template>
     <div class="home">
         <Inputs />
-        <section>
+        <section class="item-country-container">
             <div class="item-country" v-for="(country, index) in pagination" :key="index">
                 <ItemCountry
                     :common-name="country.name"
@@ -85,6 +85,12 @@ export default {
     padding: 40px 100px;
     margin: auto;
 }
+.item-country-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    min-height: 720px;
+}
 .item-country {
     width: 250px;
     height: 270px;
@@ -92,10 +98,5 @@ export default {
     padding: 0 0 50px 0;
     box-shadow: 1px 3px 5px rgba(0, 0, 0, 0.24);
     border-radius: 5px;
-}
-section {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
 }
 </style>
