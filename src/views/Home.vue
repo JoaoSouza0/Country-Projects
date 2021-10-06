@@ -1,17 +1,7 @@
 <template>
     <div class="home">
         <Inputs />
-        <section class="item-country-container">
-            <div class="item-country" v-for="(country, index) in pagination" :key="index">
-                <ItemCountry
-                    :common-name="country.name"
-                    :capital="country.capital"
-                    :region="country.region"
-                    :flag="country.flags.png"
-                    :population="country.population"
-                />
-            </div>
-        </section>
+        <ItemCountry :pagination="pagination" />
         <PagePagination
             @paginate="spliceArrayCountries"
             :pagination-start="paginationStart"
@@ -84,19 +74,5 @@ export default {
     max-width: 1200px;
     padding: 40px 100px;
     margin: auto;
-}
-.item-country-container {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    min-height: 720px;
-}
-.item-country {
-    width: 250px;
-    height: 270px;
-    margin-top: 40px;
-    padding: 0 0 50px 0;
-    box-shadow: 1px 3px 5px rgba(0, 0, 0, 0.24);
-    border-radius: 5px;
 }
 </style>
